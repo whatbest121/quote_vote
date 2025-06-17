@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { UserDocument } from './user.schema';
 
@@ -9,10 +9,10 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService
   ) { }
-  
+
   async validateUser(username: string, password: string) {
     const user = await this.usersService.validateUser(username, password);
-    
+
     return user
   }
   async login(user: UserDocument) {
@@ -21,6 +21,18 @@ export class AuthService {
       userData: payload,
       token: this.jwtService.sign(payload),
     };
+  }
+
+  async verify(token: string) {
+    try {
+      return this.jwtService.verify(token)
+    } catch (error) {
+      if (error instanceof TokenExpiredError)
+        throw new Error(
+          "UNAUTHORIZED"
+        )
+      throw error
+    }
   }
 
 }

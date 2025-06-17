@@ -1,4 +1,12 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Req } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('User')
 @Controller('users')
-export class UsersController {}
+@ApiBearerAuth('access-token')
+export class UsersController {
+    @Get('profile')
+    getProfile(@Req() req: Request) {
+        return req['users'];
+    }
+}
