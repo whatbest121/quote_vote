@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-api": "openapi --input http://localhost:3003/swagger-json  --output src/api/generated --client axios"
+    "generate-api": "openapi --input http://localhost:3003/swagger-json  --output src/api/generated --client axios",
+    "generate-fetch": "openapi --input http://localhost:3003/swagger-json  --output src/api-client/generated --client fetch"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",

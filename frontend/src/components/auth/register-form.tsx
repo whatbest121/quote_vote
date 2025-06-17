@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "@/hooks/useToast"
+import register from "@/api/services/register"
 
 const formSchema = z.object({
     username: z.string({
@@ -31,38 +32,26 @@ const formSchema = z.object({
     path: ["confirmPassword"],
 })
 
+type FormSchema = z.infer<typeof formSchema>
 export function RegisterForm() {
     const router = useRouter()
-    const [isLoading, setIsLoading] = useState(false)
-
-    const form = useForm<z.infer<typeof formSchema>>({
+    const { mutate, isPending, error } = register()
+    const form = useForm<FormSchema>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-            username: "",
-            password: "",
-            confirmPassword: "",
-        },
     })
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
-        setIsLoading(true)
-        try {
-            // TODO: Implement your registration logic here
-            console.log(values)
-            toast({
-                title: "Success",
-                description: "Your account has been created successfully.",
-            })
-            router.push("/login")
-        } catch (error) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: "Something went wrong. Please try again.",
-            })
-        } finally {
-            setIsLoading(false)
-        }
+    const onSubmit = (values: FormSchema) => {
+
+        mutate(values, {
+            async onSuccess() {
+                toast({
+                    title: "Success",
+                    description: "Your account has been created successfully.",
+                })
+                router.push("/login")
+            }
+        })
+
     }
 
     return (
@@ -114,8 +103,8 @@ export function RegisterForm() {
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit" className="w-full" disabled={isLoading}>
-                            {isLoading ? "Creating account..." : "Register"}
+                        <Button type="submit" className="w-full" disabled={isPending}>
+                            {isPending ? "Creating account..." : "Register"}
                         </Button>
                     </form>
                 </Form>
