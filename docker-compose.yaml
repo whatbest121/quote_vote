@@ -20,6 +20,7 @@ services:
     environment:
       - MONGO_URI=mongodb://mongo:27017/quotevote
       - PORT=3003
+      - JWT_SECRET="SECRET_USER"
     depends_on:
       - mongo
 
