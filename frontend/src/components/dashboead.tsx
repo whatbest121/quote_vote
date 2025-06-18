@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 // import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
+import useGetQuote from '@/api/services/quote/GetPaginatedQuotes';
 
 // Mock data
 const generateMockQuotes = () => {
@@ -79,6 +80,9 @@ const d = {
 }
 
 const QuoteVotingSystem = () => {
+
+    const { data } = useGetQuote("")
+    console.log("🚀 ~ data:", data)
     const [quotes, setQuotes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -200,53 +204,51 @@ const QuoteVotingSystem = () => {
 
     // Render quote card based on layout
     const renderQuoteCard = (quote, layout) => {
-                return (
-                    <Card key={quote.id} className={`${"hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-white rounded-2xl overflow-hidden border border-gray-100"} h-fit`}>
-                        <CardContent className="p-6">
-                            <div className="mb-4">
-                                <Badge variant="secondary" className="mb-3 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700">
-                                    {categories.find(c => c.value === quote.category)?.label}
-                                </Badge>
-                                <blockquote className="text-base text-gray-800 mb-4 leading-relaxed font-medium">
-                                    "{quote.text}"
-                                </blockquote>
-                                <div className="text-sm text-gray-600 mb-4">
-                                    — {quote.author}
-                                </div>
-                            </div>
+        return (
+            <Card key={quote.id} className={`${"hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-white rounded-2xl overflow-hidden border border-gray-100"} h-fit`}>
+                <CardContent className="p-6">
+                    <div className="mb-4">
+                        <Badge variant="secondary" className="mb-3 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700">
+                            {categories.find(c => c.value === quote.category)?.label}
+                        </Badge>
+                        <blockquote className="text-base text-gray-800 mb-4 leading-relaxed font-medium">
+                            "{quote.text}"
+                        </blockquote>
 
-                            <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                                <div className="flex items-center space-x-2">
-                                    <Button
-                                        onClick={() => handleVote(quote.id, 'upvotes')}
-                                        variant="ghost"
-                                        size="sm"
-                                        className="text-green-600 hover:bg-green-50 px-3 py-1 rounded-full"
-                                    >
-                                        <ThumbsUp className="h-4 w-4 mr-1" />
-                                        {quote.upvotes}
-                                    </Button>
+                    </div>
 
-                                    <Button
-                                        onClick={() => handleVote(quote.id, 'downvotes')}
-                                        variant="ghost"
-                                        size="sm"
-                                        className="text-red-600 hover:bg-red-50 px-3 py-1 rounded-full"
-                                    >
-                                        <ThumbsDown className="h-4 w-4 mr-1" />
-                                        {quote.downvotes}
-                                    </Button>
-                                </div>
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                        <div className="flex items-center space-x-2">
+                            <Button
+                                onClick={() => handleVote(quote.id, 'upvotes')}
+                                variant="ghost"
+                                size="sm"
+                                className="text-green-600 hover:bg-green-50 px-3 py-1 rounded-full"
+                            >
+                                <ThumbsUp className="h-4 w-4 mr-1" />
+                                {quote.upvotes}
+                            </Button>
 
-                                <div className="text-xs text-gray-500">
-                                    {new Date(quote.createdAt).toLocaleDateString('th-TH')}
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                );
-                
-        
+                            <Button
+                                onClick={() => handleVote(quote.id, 'downvotes')}
+                                variant="ghost"
+                                size="sm"
+                                className="text-red-600 hover:bg-red-50 px-3 py-1 rounded-full"
+                            >
+                                <ThumbsDown className="h-4 w-4 mr-1" />
+                                {quote.downvotes}
+                            </Button>
+                        </div>
+
+                        <div className="text-xs text-gray-500">
+                            {new Date(quote.createdAt).toLocaleDateString('th-TH')}
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+        );
+
+
     };
 
     if (loading) {
@@ -287,7 +289,7 @@ const QuoteVotingSystem = () => {
                     <p className="text-gray-600 mb-8 text-lg">รวมคำคมดี ๆ และคำกวน ๆ มาไว้ให้โหวตกัน</p>
 
                     {/* Create Quote Dialog */}
-                    <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
+                    {/* <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
                         <DialogTrigger asChild>
                             <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 rounded-full font-medium transition-all duration-300 transform hover:scale-105 shadow-lg text-lg">
                                 <Plus className="h-6 w-6 mr-3" />
@@ -362,14 +364,15 @@ const QuoteVotingSystem = () => {
                                 </Button>
                             </DialogFooter>
                         </DialogContent>
-                    </Dialog>
+                    </Dialog> */}
                 </div>
 
                 {/* Controls */}
-                <Card className="mb-8 bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+
+                {/* <Card className="mb-8 bg-white/80 backdrop-blur-sm border-0 shadow-xl">
                     <CardContent className="p-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
-                            {/* Search */}
+                             {/* Search *
                             <div className="relative">
                                 <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                                 <Input
@@ -380,7 +383,7 @@ const QuoteVotingSystem = () => {
                                 />
                             </div>
 
-                            {/* Category Filter */}
+                            {/* Category Filter 
                             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                                 <SelectTrigger className="bg-white">
                                     <SelectValue placeholder="เลือกหมวดหมู่" />
@@ -392,7 +395,7 @@ const QuoteVotingSystem = () => {
                                 </SelectContent>
                             </Select>
 
-                            {/* Sort */}
+                            {/* Sort 
                             <Select value={sortBy} onValueChange={setSortBy}>
                                 <SelectTrigger className="bg-white">
                                     <SelectValue placeholder="เรียงตาม" />
@@ -405,7 +408,7 @@ const QuoteVotingSystem = () => {
                                 </SelectContent>
                             </Select>
 
-                            {/* Layout Style */}
+                            {/* Layout Style 
                             <Select value={layoutStyle} onValueChange={setLayoutStyle}>
                                 <SelectTrigger className="bg-white">
                                     <SelectValue placeholder="รูปแบบการแสดง" />
@@ -422,13 +425,13 @@ const QuoteVotingSystem = () => {
                                 </SelectContent>
                             </Select>
 
-                            {/* Stats */}
+                            {/* Stats 
                             <div className="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2 text-center">
                                 แสดง {displayedQuotes.length} / {processedQuotes.length} คำคม
                             </div>
                         </div>
                     </CardContent>
-                </Card>
+                </Card>*/}
 
                 {/* Quotes Display */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -450,7 +453,7 @@ const QuoteVotingSystem = () => {
                 )}
 
                 {/* Empty State */}
-                {processedQuotes.length === 0 && (
+                {/* {processedQuotes.length === 0 && (
                     <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
                         <CardContent className="text-center py-16">
                             <div className="text-8xl mb-6">🤔</div>
@@ -458,7 +461,7 @@ const QuoteVotingSystem = () => {
                             <CardDescription className="text-lg">ลองเปลี่ยนคำค้นหาหรือหมวดหมู่ดูสิ</CardDescription>
                         </CardContent>
                     </Card>
-                )}
+                )} */}
             </div>
         </div>
     );

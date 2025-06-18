@@ -11,7 +11,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class QuoteService {
     /**
-     * @/ search Search keyword for quote or user_id
+     * @param search Search keyword for quote or user_id
      * @param page Page number
      * @param limit Items per page
      * @param sort Field to sort by (e.g., createdAt, vote)
@@ -27,6 +27,7 @@ export class QuoteService {
         page: string = '1',
         limit: string = '10',
         sort: string = 'createdAt',
+
     ): CancelablePromise<PaginatedQuoteResponseDto> {
         return __request(OpenAPI, {
             method: 'GET',
@@ -36,6 +37,7 @@ export class QuoteService {
                 'page': page,
                 'limit': limit,
                 'sort': sort,
+
             },
         });
     }

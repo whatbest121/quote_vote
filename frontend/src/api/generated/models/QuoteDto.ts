@@ -6,7 +6,6 @@ export type QuoteDto = {
     _id: string;
     user_id: string;
     quote: string;
-    vote: number;
     createdAt: string;
     updatedAt: string;
     __v: number;

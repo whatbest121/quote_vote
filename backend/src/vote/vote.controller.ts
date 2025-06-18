@@ -63,4 +63,11 @@ export class VoteController {
         return await this.voteService.cancelVote(req["users"]._id, quote_id)
     }
 
+    @Get('chackVote')
+    async chackVote( @Req() req: Request) {
+        return await this.voteService.chackUserVote(req["users"]._id)
+    }
+
+    
+
 }

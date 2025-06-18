@@ -5,6 +5,7 @@ import { AuthService, CreateUserDto } from "../generated"
 
 
 async function loginAuth(payload: CreateUserDto) {
+	console.log("🚀 ~ loginAuth ~ payload:", payload)
 	await sleep(500)
 	try {
 		const a = await AuthService.authControllerLogin(payload)

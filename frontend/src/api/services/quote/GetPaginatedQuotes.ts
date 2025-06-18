@@ -2,7 +2,9 @@ import { QuoteService, TestDTO } from "@/api/generated"
 import { useQuery } from "@tanstack/react-query"
 
 export const QKey = "useGetQuote"
-type Query = Parameters<typeof QuoteService.quoteControllerGetPaginatedQuotes>[0]
+type Query = Parameters<typeof QuoteService.quoteControllerGetPaginatedQuotes>[number]
+export type QuoteReturn = Awaited<ReturnType<typeof QuoteService.quoteControllerGetPaginatedQuotes>>["docs"][0]
+
 async function queryFn(payload: Query) {
 
     try {

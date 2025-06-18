@@ -76,7 +76,15 @@ export class VoteService {
     }
 
     async hasVoted(user_id: string, quote_id: string) {
-        const vote = await this.voteModel.findOne({ user_id, quote_id });
+        const vote = await this.voteModel.findOne({
+            user_id: new Types.ObjectId(user_id),
+            quote_id: new Types.ObjectId(quote_id),
+        });
+        return !!vote
+    }
+
+    async chackUserVote(user_id: string) {
+        const vote = await this.voteModel.findOne({ user_id: new Types.ObjectId(user_id), });
         return !!vote
     }
 }

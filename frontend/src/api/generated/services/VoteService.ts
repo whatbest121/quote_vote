@@ -73,4 +73,14 @@ export class VoteService {
             },
         });
     }
+    /**
+     * @returns any
+     * @throws ApiError
+     */
+    public static voteControllerChackVote(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/vote/chackVote',
+        });
+    }
 }
