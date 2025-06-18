@@ -2,6 +2,7 @@ import { type Action, type State, useSystemStore } from "@/stores/system"
 import * as React from "react"
 import { getStoredToken } from "./fn"
 import { setAccessToken } from "@/lib/utils"
+import { OpenAPI } from "@/api/generated"
 
 export interface AuthContext {
 	isAuthenticated: boolean
@@ -18,7 +19,7 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
 	const { auth, setLogin, setLogout, setSystem } = useSystemStore()
-
+	OpenAPI.BASE = 'http://localhost:3003'
 	const isAuthenticated = !!auth.token
 	if (auth.token) {
 		setAccessToken(auth.token)
