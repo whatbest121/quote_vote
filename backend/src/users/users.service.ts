@@ -7,7 +7,8 @@ import { User } from 'src/auth/user.schema';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name)
+  constructor(
+  @InjectModel(User.name)
   private userModel: Model<User>) { }
 
   async findByUsername(username: string) {

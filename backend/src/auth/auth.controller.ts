@@ -5,7 +5,7 @@ import { UsersService } from '../users/users.service';
 import { Public } from './public.decorator';
 import { LoginResponseDto } from 'src/users/dto/login-response.dto';
 import { RegisterResponseDto } from 'src/users/dto/register-response.dto';
-import { CreateUserDto } from 'src/users/create-user.dto';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Public()
 @ApiTags('Auth')

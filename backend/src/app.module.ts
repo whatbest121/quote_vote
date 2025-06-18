@@ -7,6 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { TestModule } from './test/test.module';
 import { UsersModule } from './users/users.module';
 import { AuthMiddleware } from './auth/auth.middleware';
+import { QuoteModule } from './quote/quote.module';
+import { VoteModule } from './vote/vote.module';
 
 @Module({
   imports: [
@@ -22,7 +24,9 @@ import { AuthMiddleware } from './auth/auth.middleware';
     }),
     AuthModule,
     UsersModule,
-    TestModule
+    TestModule,
+    QuoteModule,
+    VoteModule
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -31,6 +35,10 @@ export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .forRoutes({ path: 'users/profile', method: RequestMethod.GET }, { path: 'test/test', method: RequestMethod.POST })
+      .forRoutes({ path: 'users/profile', method: RequestMethod.GET },
+        { path: 'test/test', method: RequestMethod.POST },
+        { path: 'quote/(.*)', method: RequestMethod.ALL },
+        { path: 'vote/(.*)', method: RequestMethod.ALL }
+      )
   }
 }
