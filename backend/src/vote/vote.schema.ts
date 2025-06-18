@@ -5,10 +5,10 @@ import * as mongoosePaginate from 'mongoose-paginate-v2';
 @Schema({ collection: 'votes', timestamps: true })
 export class Vote extends Document {
   @Prop({ required: true })
-  user_id: Types.ObjectId;;
+  user_id: string
 
   @Prop({ required: true })
-  quote_id: Types.ObjectId;;
+  quote_id: string
 
   @Prop({ required: true, enum: ['up', 'down'] })
   vote: 'up' | 'down';

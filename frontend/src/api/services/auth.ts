@@ -1,15 +1,14 @@
 import { ServerError } from "@/errors"
 import { sleep } from "@/lib/utils"
 import { useMutation } from "@tanstack/react-query"
-import { AuthService, CreateUserDto } from "../generated"
+import { AuthService, CreateUserDto, LoginResponseDto } from "../generated"
 
 
 async function loginAuth(payload: CreateUserDto) {
-	console.log("🚀 ~ loginAuth ~ payload:", payload)
 	await sleep(500)
 	try {
 		const a = await AuthService.authControllerLogin(payload)
-		return a
+		return a as LoginResponseDto
 	} catch (error) {
 		if (error instanceof Error) {
 			if (error.message === "Failed to fetch") {

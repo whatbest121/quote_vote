@@ -25,7 +25,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		setAccessToken(auth.token)
 	}
 
-	const logout = setLogout
+	const logout = async () => {
+		await setLogout()
+		setAccessToken('')
+	}
 
 	const login = setLogin
 

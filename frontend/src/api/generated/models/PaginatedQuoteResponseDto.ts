@@ -2,9 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { QuoteDto } from './QuoteDto';
+import type { QuoteWithVoteStatusDto } from './QuoteWithVoteStatusDto';
 export type PaginatedQuoteResponseDto = {
-    docs: Array<QuoteDto>;
+    docs: Array<QuoteWithVoteStatusDto>;
     totalDocs: number;
     limit: number;
     totalPages: number;

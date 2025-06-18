@@ -2,7 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type hasVoted = {
-    hasVoted: boolean;
+export type VoteDto = {
+    /**
+     * Quote ID to vote on
+     */
+    quote_id: string;
 };
 

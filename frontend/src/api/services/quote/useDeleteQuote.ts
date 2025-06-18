@@ -1,5 +1,6 @@
 import { EditQuoteDto, QuoteService } from "@/api/generated"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { QKey, QueryPag } from "./GetPaginatedQuotes"
 
 async function mutationFn(id: string,) {
 
@@ -11,8 +12,21 @@ async function mutationFn(id: string,) {
     }
 }
 
-export default function useDeleteQuote() {
+export default function useDeleteQuote(payload?: QueryPag) {
+    const queryKey = [
+        QKey,
+        payload?.limit,
+        payload?.page,
+        payload?.search,
+        payload?.sort
+
+    ]
+    const queryClient = useQueryClient()
     return useMutation({
-        mutationFn
+        mutationFn,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey })
+        },
+
     })
 }

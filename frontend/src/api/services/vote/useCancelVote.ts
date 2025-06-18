@@ -1,18 +1,34 @@
-import { CreateQuoteDto, QuoteService, TestDTO, VoteService } from "@/api/generated"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { VoteService } from "@/api/generated"
+import { Query, useMutation, useQueryClient } from "@tanstack/react-query"
+import { QKey, QueryPag } from "../quote/GetPaginatedQuotes"
 
 async function mutationFn(quoteId: string) {
-
     try {
-        const data = await VoteService.voteControllerCancelVote(quoteId)
+        const data = await VoteService.voteControllerCancelVote({ quote_id: quoteId })
         return data
     } catch (error: any) {
-        throw new error
+        throw error
     }
 }
 
-export default function useVote() {
+export default function useCancelVote(payload: QueryPag) {
+    const queryKey = [
+        QKey,
+        payload?.limit,
+        payload?.page,
+        payload?.search,
+        payload?.sort
+
+    ]
+    const queryClient = useQueryClient()
     return useMutation({
-        mutationFn
+        mutationFn,
+        onSuccess: () => {
+            if (payload) {
+                queryClient.invalidateQueries({ queryKey }) // รีเฟรชเฉพาะ query นี้
+            } else {
+                queryClient.invalidateQueries({ queryKey: [QKey] }) // รีเฟรชทั้งหมดที่ใช้ QKey
+            }
+        },
     })
 }

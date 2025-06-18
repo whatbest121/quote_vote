@@ -45,7 +45,6 @@ export function LoginForm() {
 
         mutate(values, {
             async onSuccess(data) {
-                console.log("🚀 ~ onSuccess ~ data:", data)
                 await auth.login({ token: data.token, user: data.userData })
                 toast({
                     title: "Success",

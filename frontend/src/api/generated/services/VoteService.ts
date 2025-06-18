@@ -2,85 +2,86 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { hasVoted } from '../models/hasVoted';
-import type { QuoteResponseDto } from '../models/QuoteResponseDto';
-import type { VoteResponseDto } from '../models/VoteResponseDto';
+import type { CancelVoteDto } from '../models/CancelVoteDto';
+import type { CheckUserVoteResponseDto } from '../models/CheckUserVoteResponseDto';
+import type { HasVotedResponseDto } from '../models/HasVotedResponseDto';
+import type { QuoteWithVoteStatusDto } from '../models/QuoteWithVoteStatusDto';
+import type { VoteCountResponseDto } from '../models/VoteCountResponseDto';
+import type { VoteDto } from '../models/VoteDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class VoteService {
     /**
-     * @param id Quote ID
-     * @returns QuoteResponseDto
+     * @param quoteId Quote ID to get votes for
+     * @returns VoteCountResponseDto Get votes for a quote
      * @throws ApiError
      */
-    public static voteControllerGetVote(
-        id: string,
-    ): CancelablePromise<QuoteResponseDto> {
+    public static voteControllerGetQuoteVotes(
+        quoteId: string,
+    ): CancelablePromise<VoteCountResponseDto> {
         return __request(OpenAPI, {
-            method: 'POST',
-            url: '/vote/{_id}',
+            method: 'GET',
+            url: '/vote/quote/{quote_id}',
             path: {
-                '_id': id,
+                'quote_id': quoteId,
             },
         });
     }
     /**
-     * @param quoteId Quote ID
-     * @returns hasVoted
+     * @param quoteId Quote ID to check vote status
+     * @returns HasVotedResponseDto Check if user has voted on a quote
      * @throws ApiError
      */
     public static voteControllerHasVoted(
         quoteId: string,
-    ): CancelablePromise<hasVoted> {
+    ): CancelablePromise<HasVotedResponseDto> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/vote/has-voted/{quote_id}',
+            url: '/vote/hasVoted/{quote_id}',
             path: {
                 'quote_id': quoteId,
             },
         });
     }
     /**
-     * @param quoteId Quote ID
-     * @returns VoteResponseDto
+     * @param requestBody
+     * @returns QuoteWithVoteStatusDto Vote on a quote
      * @throws ApiError
      */
     public static voteControllerVote(
-        quoteId: string,
-    ): CancelablePromise<VoteResponseDto> {
+        requestBody: VoteDto,
+    ): CancelablePromise<QuoteWithVoteStatusDto> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/vote/vot/{quote_id}',
-            path: {
-                'quote_id': quoteId,
-            },
+            url: '/vote/vote',
+            body: requestBody,
+            mediaType: 'application/json',
         });
     }
     /**
-     * @param quoteId Quote ID
-     * @returns VoteResponseDto
+     * @param requestBody
+     * @returns QuoteWithVoteStatusDto Cancel vote on a quote
      * @throws ApiError
      */
     public static voteControllerCancelVote(
-        quoteId: string,
-    ): CancelablePromise<VoteResponseDto> {
+        requestBody: CancelVoteDto,
+    ): CancelablePromise<QuoteWithVoteStatusDto> {
         return __request(OpenAPI, {
-            method: 'POST',
-            url: '/vote/cancelVot/{quote_id}',
-            path: {
-                'quote_id': quoteId,
-            },
+            method: 'DELETE',
+            url: '/vote/cancelVote',
+            body: requestBody,
+            mediaType: 'application/json',
         });
     }
     /**
-     * @returns any
+     * @returns CheckUserVoteResponseDto Check if user has voted on any quote
      * @throws ApiError
      */
-    public static voteControllerChackVote(): CancelablePromise<any> {
+    public static voteControllerCheckUserVote(): CancelablePromise<CheckUserVoteResponseDto> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/vote/chackVote',
+            url: '/vote/checkUserVote',
         });
     }
 }

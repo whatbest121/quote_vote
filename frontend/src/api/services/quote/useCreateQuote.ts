@@ -1,7 +1,7 @@
 import { CreateQuoteDto, QuoteService, TestDTO } from "@/api/generated"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { QKey, QueryPag } from "./GetPaginatedQuotes"
 
-export const QKey = "useCreateQuote"
 async function mutationFn(payload: CreateQuoteDto) {
 
     try {
@@ -12,8 +12,20 @@ async function mutationFn(payload: CreateQuoteDto) {
     }
 }
 
-export default function useCreateQuote() {
+export default function useCreateQuote(payload?: QueryPag) {
+    const queryKey = [
+        QKey,
+        payload?.limit,
+        payload?.page,
+        payload?.search,
+        payload?.sort
+
+    ]
+    const queryClient = useQueryClient()
     return useMutation({
-        mutationFn
+        mutationFn,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey })
+        },
     })
 }

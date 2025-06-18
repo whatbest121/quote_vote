@@ -13,16 +13,18 @@ import { QuoteResponseDto } from './dto/res/quoteResponse.dto';
 export class QuoteController {
     constructor(private readonly quoteService: QuoteService) { }
 
-    @Get()
+    @Get("/quote")
     @ApiResponse({ status: 200, type: PaginatedQuoteResponseDto })
     @ApiQuery({ type: PaginateQueryDto })
-    async getPaginatedQuotes(@Query() query: PaginateQueryDto) {
+    async getPaginatedQuotes(@Query() query: PaginateQueryDto, @Req() req: Request) {
         const { search, page, limit, sort } = query;
+        const currentUserId = req["users"];
         const result = await this.quoteService.paginateQuotes(
             search,
             +(page || 1),
             +(limit || 10),
             sort || 'createdAt',
+            currentUserId
         );
         return result
     }

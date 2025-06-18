@@ -1,9 +1,11 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Quote } from 'src/quote/quote.schema';
+import { Quote, QuoteDocument } from '../quote/quote.schema';
 import { QuoteModelPaginate } from 'src/quote/quote.service';
 import { Vote, VoteDocument } from './vote.schema';
 import { Model, Types } from 'mongoose';
+
+export type VoteModelPaginate = Model<VoteDocument>;
 
 @Injectable()
 export class VoteService {
@@ -12,7 +14,7 @@ export class VoteService {
         private quoteModel: QuoteModelPaginate,
 
         @InjectModel(Vote.name)
-        private voteModel: Model<VoteDocument>,
+        private voteModel: VoteModelPaginate,
     ) { }
 
     async vote(user_id: string, quote_id: string) {
@@ -26,65 +28,84 @@ export class VoteService {
             throw new BadRequestException('You already voted this quote');
         }
 
-        return this.voteModel.create({
-            user_id: new Types.ObjectId(user_id),
-            quote_id: new Types.ObjectId(quote_id), vote: "up"
+        const hasVotedOnAny = await this.voteModel.findOne({
+            user_id: user_id
         });
+
+        if (hasVotedOnAny) {
+            throw new BadRequestException('User has already voted on another quote');
+        }
+
+        const vote = await this.voteModel.create({
+            user_id: user_id,
+            quote_id: quote_id,
+            vote: 'up'
+        });
+
+        return await this.getUpdatedQuoteData(quote_id, user_id);
     }
 
     async cancelVote(user_id: string, quote_id: string) {
         const result = await this.voteModel.findOneAndDelete({
-            user_id: new Types.ObjectId(user_id),
-            quote_id: new Types.ObjectId(quote_id),
+            user_id: user_id,
+            quote_id: quote_id,
         });
         if (!result) {
             throw new NotFoundException('No vote found to cancel');
         }
-        return result;
+        return await this.getUpdatedQuoteData(quote_id, user_id);
+    }
+
+    async getUpdatedQuoteData(quoteId: string, userId: string) {
+        const quote = await this.quoteModel.findById(quoteId);
+        if (!quote) {
+            throw new NotFoundException('Quote not found');
+        }
+
+        const quoteObj = quote.toObject();
+
+        const userVote = await this.voteModel.findOne({
+            user_id: new Types.ObjectId(userId),
+            quote_id: quote._id
+        });
+
+        const hasVotedOnAny = await this.voteModel.findOne({
+            user_id: new Types.ObjectId(userId)
+        });
+
+        const voteCount = await this.quote_votes(quoteId);
+
+        return {
+            ...quoteObj,
+            hasVoted: !!userVote,
+            canVote: !userVote && !hasVotedOnAny && quote.user_id.toString() !== userId,
+            isOwnQuote: quote.user_id.toString() === userId,
+            voteCount
+        };
     }
 
     async quote_votes(quote_id: string) {
-        const result = await this.quoteModel.aggregate([
-            {
-                $match: { _id: new Types.ObjectId(quote_id) }
-            },
-            {
-                $lookup: {
-                    from: 'votes',
-                    localField: '_id',
-                    foreignField: 'quote_id',
-                    as: 'votes',
-                },
-            },
-            {
-                $addFields: {
-                    vote: {
-                        $subtract: [
-                            { $size: { $filter: { input: '$votes', cond: { $eq: ['$$this.vote', 'up'] } } } },
-                            { $size: { $filter: { input: '$votes', cond: { $eq: ['$$this.vote', 'down'] } } } },
-                        ],
-                    },
-                },
-            },
-            {
-                $project: {
-                    votes: 0,
-                },
-            },
-        ]);
-        return result[0]; // เพราะเราใช้ $match แล้วจะได้แค่ 1 ตัว
+        const upvotes = await this.voteModel.countDocuments({
+            quote_id: quote_id,
+            vote: 'up'
+        });
+        const downvotes = await this.voteModel.countDocuments({
+            quote_id: quote_id,
+            vote: 'down'
+        });
+        return upvotes - downvotes;
     }
 
     async hasVoted(user_id: string, quote_id: string) {
         const vote = await this.voteModel.findOne({
-            user_id: new Types.ObjectId(user_id),
-            quote_id: new Types.ObjectId(quote_id),
+            user_id: user_id,
+            quote_id: quote_id,
         });
         return !!vote
     }
 
     async chackUserVote(user_id: string) {
-        const vote = await this.voteModel.findOne({ user_id: new Types.ObjectId(user_id), });
+        const vote = await this.voteModel.findOne({ user_id: user_id, });
         return !!vote
     }
 }

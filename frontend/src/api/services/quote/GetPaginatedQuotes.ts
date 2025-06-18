@@ -2,12 +2,18 @@ import { QuoteService, TestDTO } from "@/api/generated"
 import { useQuery } from "@tanstack/react-query"
 
 export const QKey = "useGetQuote"
-type Query = Parameters<typeof QuoteService.quoteControllerGetPaginatedQuotes>[number]
+export type QueryPag = {
+    search?: string;
+    page?: string;
+    limit?: string;
+    sort?: string;
+}
 export type QuoteReturn = Awaited<ReturnType<typeof QuoteService.quoteControllerGetPaginatedQuotes>>["docs"][0]
 
-async function queryFn(payload: Query) {
+async function queryFn(payload: QueryPag) {
 
     try {
+        //@ts-ignore
         const data = await QuoteService.quoteControllerGetPaginatedQuotes(payload)
         return data
     } catch (error: any) {
@@ -15,9 +21,17 @@ async function queryFn(payload: Query) {
     }
 }
 
-export default function useGetQuote(payload: Query) {
+export default function useGetQuote(payload: QueryPag) {
+    const queryKey = [
+        QKey,
+        payload?.limit,
+        payload?.page,
+        payload?.search,
+        payload?.sort
+
+    ]
     return useQuery({
-        queryKey: [QKey],
+        queryKey,
         queryFn: () => queryFn(payload)
     })
 }

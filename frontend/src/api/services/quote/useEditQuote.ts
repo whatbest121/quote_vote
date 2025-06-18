@@ -1,6 +1,6 @@
 import { EditQuoteDto, QuoteService } from "@/api/generated"
-import { useMutation } from "@tanstack/react-query"
-
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { QKey } from "./GetPaginatedQuotes"
 async function mutationFn(payload: EditQuoteDto) {
 
     try {
@@ -12,7 +12,11 @@ async function mutationFn(payload: EditQuoteDto) {
 }
 
 export default function useEditQuote() {
+    const queryClient = useQueryClient()
     return useMutation({
-        mutationFn
+        mutationFn,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [QKey] })
+        },
     })
 }

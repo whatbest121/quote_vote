@@ -27,11 +27,11 @@ export class QuoteService {
         page: string = '1',
         limit: string = '10',
         sort: string = 'createdAt',
-
+ 
     ): CancelablePromise<PaginatedQuoteResponseDto> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/quote',
+            url: '/quote/quote',
             query: {
                 'search': search,
                 'page': page,

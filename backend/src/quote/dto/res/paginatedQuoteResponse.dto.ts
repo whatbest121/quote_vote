@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { QuoteDto } from './quote.dto';
+import { QuoteWithVoteStatusDto } from '../../../vote/dto/res/quote-with-vote-status.dto';
 
 export class PaginatedQuoteResponseDto {
-    @ApiProperty({ type: [QuoteDto] })
-    docs: QuoteDto[];
+    @ApiProperty({ type: [QuoteWithVoteStatusDto] })
+    docs: QuoteWithVoteStatusDto[];
 
     @ApiProperty()
     totalDocs: number;

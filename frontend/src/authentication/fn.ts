@@ -20,3 +20,4 @@ export function setStoredToken(token: string | null) {
 		localStorage.removeItem(key)
 	}
 }
+
